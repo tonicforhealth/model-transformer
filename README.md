@@ -5,7 +5,7 @@ Library is simple abstraction for object transformations.
 
 [![Build Status](https://scrutinizer-ci.com/g/tonicforhealth/model-transformer/badges/build.png?b=master)](https://scrutinizer-ci.com/g/tonicforhealth/model-transformer/build-status/master)
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/tonicforhealth/model-transformer/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/tonicforhealth/model-transformer/?branch=master)
-[![SensioLabsInsight](https://insight.sensiolabs.com/projects/05f97462-af28-49db-92be-07f38f6a8e19/big.png)](https://insight.sensiolabs.com/projects/05f97462-af28-49db-92be-07f38f6a8e19)
+[![SensioLabsInsight](https://insight.sensiolabs.com/projects/05f97462-af28-49db-92be-07f38f6a8e19/mini.png)](https://insight.sensiolabs.com/projects/05f97462-af28-49db-92be-07f38f6a8e19)
    
 Installation
 ------------
