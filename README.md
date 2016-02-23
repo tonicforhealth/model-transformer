@@ -1,7 +1,7 @@
 Model Transformer
 =================
 
-Library is simple abstraction for object transformations. 
+Simple abstraction for object transformations. 
 
 [![Build Status](https://scrutinizer-ci.com/g/tonicforhealth/model-transformer/badges/build.png?b=master)](https://scrutinizer-ci.com/g/tonicforhealth/model-transformer/build-status/master)
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/tonicforhealth/model-transformer/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/tonicforhealth/model-transformer/?branch=master)
