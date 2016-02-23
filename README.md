@@ -2,11 +2,8 @@ Model Transformer
 =================
 
 Library is simple abstraction for object transformations. 
-   
-Use cases: 
-    
-1. Separate domain model layer from view or presentation layer, but still keep objects.
-2. Separate domain model from resource representations (in RESTful applications).
+
+![SensioLabs Insight](https://insight.sensiolabs.com/projects/05f97462-af28-49db-92be-07f38f6a8e19/big.png)
    
 Installation
 ------------
@@ -19,6 +16,11 @@ $ composer require tonicforhealth/model-transformer
  
 Usage 
 -----
+   
+Possible use cases: 
+
+1. Separate domain model layer from view or presentation layer, but still keep objects.
+2. Separate domain model from resource representations (in RESTful applications).
 
 Suppose, there are two *domain objects*:
  
