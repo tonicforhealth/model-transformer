@@ -1,6 +1,6 @@
 suites:
     default:
-        namespace: Tonic\Component
-        psr4_prefix: Tonic\Component
+        namespace: Tonic\Component\ApiLayer
+        psr4_prefix: Tonic\Component\ApiLayer
         src_path: src/
         spec_prefix: spec\
