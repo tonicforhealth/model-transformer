@@ -17,10 +17,8 @@ Installation
 $ composer require tonicforhealth/model-transformer
 ```
  
-Specifications, Documentation & Examples
-----------------------------------------
-
-### Usage
+Usage 
+-----
 
 Suppose, there are two *domain objects*:
  
@@ -195,16 +193,16 @@ Use it anywhere:
 $productRepresentation = $modelTransformer->transform($product, ProductRepresentation::class);
 ```
 
-### Specifications & Documentation
+Specifications
+--------------
 
 All actual documentation is runnable library specifications at `/spec` directory. 
 
-To ensure library is not broken, run (under library directory):
+And to ensure library is not broken, run (under library directory):
 
 ```
 bin/phpspec run
 ```
-
 
 
 
