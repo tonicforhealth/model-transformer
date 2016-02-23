@@ -1,0 +1,22 @@
+{
+    "name": "tonic/model-transformer",
+    "type": "library",
+    "description": "Model transformer component",
+    "authors": [
+        {
+            "name": "Dmytro Krasun",
+            "email": "dmytro.krasun@tonicforhealth.com"
+        }
+    ],
+    "require-dev": {
+        "phpspec/phpspec": "~2.3"
+    },
+    "config": {
+        "bin-dir": "bin"
+    },
+    "autoload": {
+        "psr-4": {
+            "Tonic\\Component\\": "src/"
+        }
+    }
+}

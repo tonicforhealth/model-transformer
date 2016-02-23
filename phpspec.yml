@@ -1,0 +1,6 @@
+suites:
+    default:
+        namespace: Tonic\Component
+        psr4_prefix: Tonic\Component
+        src_path: src/
+        spec_prefix: spec\
