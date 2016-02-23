@@ -3,7 +3,7 @@ Model Transformer
 
 Library is simple abstraction for object transformations. 
 
-![SensioLabs Insight](https://insight.sensiolabs.com/projects/05f97462-af28-49db-92be-07f38f6a8e19/big.png)
+[![SensioLabsInsight](https://insight.sensiolabs.com/projects/05f97462-af28-49db-92be-07f38f6a8e19/big.png)](https://insight.sensiolabs.com/projects/05f97462-af28-49db-92be-07f38f6a8e19)
    
 Installation
 ------------
