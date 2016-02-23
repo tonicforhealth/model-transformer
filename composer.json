@@ -1,5 +1,5 @@
 {
-    "name": "tonic/model-transformer",
+    "name": "tonicforhealth/model-transformer",
     "type": "library",
     "description": "Model transformer component",
     "authors": [
