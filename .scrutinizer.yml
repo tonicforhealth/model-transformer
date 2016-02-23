@@ -1,5 +1,7 @@
-imports:
-  - php
+build:
+    environment:
+        php:
+            version: 5.5.9
 
 tools:
   php_code_sniffer:
