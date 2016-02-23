@@ -24,8 +24,7 @@ Specifications, Documentation & Examples
 
 Suppose, there are two *domain objects*:
  
-```
-#!php
+```php
 <?php 
 
 class Product 
@@ -80,8 +79,7 @@ class Category
 
 And one *presentation object* which can be used in presentation layer: 
 
-```
-#!php
+```php
 <?php 
 
 class ProductPresentation
@@ -142,8 +140,7 @@ This library provides simple and concise solution for this problem:
  
 Possible transformer for `ProductRepresentation`: 
 
-```
-#!php
+```php
 <?php
 
 class ProductToProductRepresentationModelTransformer implements ModelTransformerInterface
@@ -184,8 +181,7 @@ class ProductToProductRepresentationModelTransformer implements ModelTransformer
 
 Register it: 
 
-```
-#!php
+```php
 <?php
 
 $modelTransformer->addTransformer($productToProductRepresentationModelTransformer);
@@ -193,8 +189,7 @@ $modelTransformer->addTransformer($productToProductRepresentationModelTransforme
 
 Use it anywhere: 
 
-```
-#!php
+```php
 <?php
 
 $productRepresentation = $modelTransformer->transform($product, ProductRepresentation::class);
