@@ -2,6 +2,7 @@
     "name": "tonicforhealth/model-transformer",
     "type": "library",
     "description": "Model transformer component",
+    "license": "MIT",
     "authors": [
         {
             "name": "Dmytro Krasun",
