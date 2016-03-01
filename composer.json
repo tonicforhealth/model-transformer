@@ -1,7 +1,7 @@
 {
     "name": "tonicforhealth/model-transformer",
     "type": "library",
-    "description": "Model transformer component",
+    "description": "Simple abstraction for object transformations",
     "license": "MIT",
     "authors": [
         {
