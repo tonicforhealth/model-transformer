@@ -15,7 +15,7 @@ class ModelTransformer implements ModelTransformerInterface
     private $modelTransformers = [];
 
     /**
-     * @var ModelTransformerInterface[]
+     * @var array
      */
     private $sorted = [];
 
@@ -48,7 +48,6 @@ class ModelTransformer implements ModelTransformerInterface
 
         krsort($this->modelTransformers);
         $this->sorted = [];
-        /** @var ModelTransformerInterface[] $modelTransformers */
         foreach ($this->modelTransformers as $modelTransformers) {
             $this->sorted = array_merge($this->sorted, $modelTransformers);
         }
