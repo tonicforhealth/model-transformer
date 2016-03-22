@@ -2,24 +2,22 @@
 
 namespace Tonic\Component\ApiLayer\ModelTransformer;
 
-use Tonic\Component\ApiLayer\ModelTransformer\Exception\UnsupportedTransformationException;
-
 /**
  * Handles homogeneous collection of objects.
  */
 class CollectionModelTransformer implements ModelTransformerInterface
 {
     /**
-     * @var ModelTransformerInterface
+     * @var ModelTransformer
      */
     private $modelTransformer;
 
     /**
      * Constructor.
      *
-     * @param ModelTransformerInterface $modelTransformer
+     * @param ModelTransformer $modelTransformer
      */
-    public function __construct(ModelTransformerInterface $modelTransformer)
+    public function __construct(ModelTransformer $modelTransformer)
     {
         $this->modelTransformer = $modelTransformer;
     }
@@ -31,12 +29,12 @@ class CollectionModelTransformer implements ModelTransformerInterface
     {
         if (is_array($object) || $object instanceof \Traversable) {
             foreach ($object as $element) {
-                if (!$this->modelTransformer->supports($element, $targetClass)) {
-                    return false;
+                if ($this->modelTransformer->supports($element, $targetClass)) {
+                    // if at least one object supported in homogeneous collection
+                    // it is assumed that all other objects are supported
+                    return true;
                 }
             }
-
-            return true;
         }
 
         return false;
@@ -47,13 +45,14 @@ class CollectionModelTransformer implements ModelTransformerInterface
      */
     public function transform($object, $targetClass)
     {
-        if (!$this->supports($object, $targetClass)) {
-            throw new UnsupportedTransformationException();
+        if (count($object) == 0) {
+            return [];
         }
 
+        $modelTransformer = $this->modelTransformer->findSupportedModelTransformer(reset($object), $targetClass);
         $elements = [];
         foreach ($object as $element) {
-            $elements[] = $this->modelTransformer->transform($element, $targetClass);
+            $elements[] = $modelTransformer->transform($element, $targetClass);
         }
 
         return $elements;

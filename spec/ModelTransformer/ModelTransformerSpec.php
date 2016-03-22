@@ -153,4 +153,28 @@ class ModelTransformerSpec extends ObjectBehavior
             ->shouldBeLike((object) ['a' => 1])
         ;
     }
+
+    public function it_should_find_and_return_supported_model_transformer(
+        ModelTransformerInterface $notSupportedModelTransformer,
+        ModelTransformerInterface $supportedModelTransformer
+    )
+    {
+        $notSupportedModelTransformer
+            ->supports(new \stdClass(), 'SomeClass')
+            ->willReturn(false)
+        ;
+
+        $supportedModelTransformer
+            ->supports(new \stdClass(), 'SomeClass')
+            ->willReturn(true)
+        ;
+
+        $this->addModelTransformer($notSupportedModelTransformer);
+        $this->addModelTransformer($supportedModelTransformer);
+
+        $this
+            ->findSupportedModelTransformer(new \stdClass(), 'SomeClass')
+            ->shouldBe($supportedModelTransformer)
+        ;
+    }
 }

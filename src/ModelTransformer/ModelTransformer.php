@@ -74,10 +74,9 @@ class ModelTransformer implements ModelTransformerInterface
      */
     public function transform($object, $targetClass)
     {
-        foreach ($this->getModelTransformers() as $modelTransformer) {
-            if ($modelTransformer->supports($object, $targetClass)) {
-                return $modelTransformer->transform($object, $targetClass);
-            }
+        $modelTransformer = $this->findSupportedModelTransformer($object, $targetClass);
+        if ($modelTransformer) {
+            return $modelTransformer->transform($object, $targetClass);
         }
 
         $objectType = is_object($object) ? get_class($object) : gettype($object);
@@ -86,5 +85,24 @@ class ModelTransformer implements ModelTransformerInterface
             $objectType,
             $targetClass
         ));
+    }
+
+    /**
+     * Finds and returns model transformer which supports specified object and target class.
+     *
+     * @param object|array $object
+     * @param string $targetClass
+     *
+     * @return ModelTransformerInterface|null
+     */
+    public function findSupportedModelTransformer($object, $targetClass)
+    {
+        foreach ($this->getModelTransformers() as $modelTransformer) {
+            if ($modelTransformer->supports($object, $targetClass)) {
+                return $modelTransformer;
+            }
+        }
+
+        return null;
     }
 }
