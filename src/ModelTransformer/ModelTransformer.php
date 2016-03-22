@@ -17,11 +17,17 @@ class ModelTransformer implements ModelTransformerInterface
     /**
      * @param ModelTransformerInterface $modelTransformer
      *
+     * @param int $priority
      * @return $this|ModelTransformerInterface
      */
-    public function addModelTransformer(ModelTransformerInterface $modelTransformer)
+    public function addModelTransformer(ModelTransformerInterface $modelTransformer, $priority = 0)
     {
-        $this->modelTransformers[] = $modelTransformer;
+        if (!isset($this->modelTransformers[$priority])) {
+            $this->modelTransformers[$priority] = [];
+        }
+
+        $this->modelTransformers[$priority][] = $modelTransformer;
+        unset($this->sorted);
 
         return $this;
     }
@@ -31,7 +37,17 @@ class ModelTransformer implements ModelTransformerInterface
      */
     public function getModelTransformers()
     {
-        return $this->modelTransformers;
+        if (isset($this->sorted)) {
+            return $this->sorted;
+        }
+
+        krsort($this->modelTransformers);
+        $this->sorted = [];
+        foreach ($this->modelTransformers as $modelTransformers) {
+            $this->sorted = array_merge($this->sorted, $modelTransformers);
+        }
+
+        return $this->sorted;
     }
 
     /**
@@ -39,7 +55,7 @@ class ModelTransformer implements ModelTransformerInterface
      */
     public function supports($object, $targetClass)
     {
-        foreach ($this->modelTransformers as $modelTransformer) {
+        foreach ($this->getModelTransformers() as $modelTransformer) {
             if ($modelTransformer->supports($object, $targetClass)) {
                 return true;
             }
@@ -53,7 +69,7 @@ class ModelTransformer implements ModelTransformerInterface
      */
     public function transform($object, $targetClass)
     {
-        foreach ($this->modelTransformers as $modelTransformer) {
+        foreach ($this->getModelTransformers() as $modelTransformer) {
             if ($modelTransformer->supports($object, $targetClass)) {
                 return $modelTransformer->transform($object, $targetClass);
             }

@@ -28,6 +28,37 @@ class ModelTransformerSpec extends ObjectBehavior
         $this->getModelTransformers()->shouldHaveCount(1);
     }
 
+    function it_should_prioritize_transformers(
+        ModelTransformerInterface $firstTransformer,
+        ModelTransformerInterface $secondTransformer,
+        ModelTransformerInterface $thirdTransformer
+    )
+    {
+        $this->addModelTransformer($secondTransformer, 2)->shouldBe($this->getWrappedObject());
+        $this->addModelTransformer($thirdTransformer, 2)->shouldBe($this->getWrappedObject());
+        $this->addModelTransformer($firstTransformer, 15)->shouldBe($this->getWrappedObject());
+
+        $firstTransformer
+            ->supports(new \stdClass(), 'SomeClass')
+            ->willReturn(false)
+            ->shouldBeCalled()
+        ;
+
+        $secondTransformer
+            ->supports(new \stdClass(), 'SomeClass')
+            ->willReturn(true)
+            ->shouldBeCalled()
+        ;
+
+        $thirdTransformer
+            ->supports(new \stdClass(), 'SomeClass')
+            ->willReturn(false)
+            ->shouldNotBeCalled()
+        ;
+
+        $this->supports(new \stdClass(), 'SomeClass')->shouldBe(true);
+    }
+
     function it_should_support_target_class_if_at_least_one_transformer_supports_it(
         ModelTransformerInterface $supportedModelTransformer,
         ModelTransformerInterface $notSupportedModelTransformer
