@@ -186,8 +186,12 @@ Register it:
 ```php
 <?php
 
-$modelTransformer->addTransformer($productToProductRepresentationModelTransformer);
+$priority = 0;
+$modelTransformer->addTransformer($productToProductRepresentationModelTransformer, $priority = 0);
 ```
+
+With an optional priority integer (higher equals more important and therefore that the transformer will be triggered earlier) 
+that determines when a transformer is triggered versus other transformers (defaults to 0).
 
 Use it anywhere: 
 
