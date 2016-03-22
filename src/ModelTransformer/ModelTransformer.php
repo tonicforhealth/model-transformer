@@ -21,8 +21,8 @@ class ModelTransformer implements ModelTransformerInterface
 
     /**
      * @param ModelTransformerInterface $modelTransformer
+     * @param int                       $priority
      *
-     * @param int $priority
      * @return $this|ModelTransformerInterface
      */
     public function addModelTransformer(ModelTransformerInterface $modelTransformer, $priority = 0)
@@ -91,7 +91,7 @@ class ModelTransformer implements ModelTransformerInterface
      * Finds and returns model transformer which supports specified object and target class.
      *
      * @param object|array $object
-     * @param string $targetClass
+     * @param string       $targetClass
      *
      * @return ModelTransformerInterface|null
      */

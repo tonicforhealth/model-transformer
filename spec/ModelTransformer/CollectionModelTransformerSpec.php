@@ -93,7 +93,7 @@ class CollectionModelTransformerSpec extends ObjectBehavior
         ;
 
         $this
-            ->shouldNotThrow(UnsupportedTransformationException::class)
+            ->shouldThrow(UnsupportedTransformationException::class)
             ->duringTransform([new \DateTime()], \stdClass::class)
         ;
     }
