@@ -29,17 +29,13 @@ class CollectionModelTransformer implements ModelTransformerInterface
      */
     public function supports($object, $targetClass)
     {
-        if (is_array($object) || $object instanceof \Traversable) {
-            foreach ($object as $element) {
-                if ($this->modelTransformer->supports($element, $targetClass)) {
-                    // if at least one object supported in homogeneous collection
-                    // it is assumed that all other objects are supported
-                    return true;
-                }
-            }
+        if (!(is_array($object) || $object instanceof \Traversable)) {
+            return false;
         }
 
-        return false;
+        // if at least one object supported in homogeneous collection
+        // it is assumed that all other objects are supported
+        return ((count($object) == 0) || $this->modelTransformer->supports(reset($object), $targetClass));
     }
 
     /**
