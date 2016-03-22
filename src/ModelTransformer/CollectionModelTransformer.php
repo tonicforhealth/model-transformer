@@ -52,9 +52,13 @@ class CollectionModelTransformer implements ModelTransformerInterface
         }
 
         $modelTransformer = $this->modelTransformer->findSupportedModelTransformer(reset($object), $targetClass);
+        if (!$modelTransformer) {
+            throw new UnsupportedTransformationException();
+        }
+
         $elements = [];
         foreach ($object as $element) {
-            if (!$this->modelTransformer->supports($object, $targetClass)) {
+            if (!$this->modelTransformer->supports($element, $targetClass)) {
                 throw new UnsupportedTransformationException();
             }
 

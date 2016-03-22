@@ -68,6 +68,11 @@ class CollectionModelTransformerSpec extends ObjectBehavior
         ;
 
         $modelTransformer
+            ->supports(new \DateTime(), \stdClass::class)
+            ->willReturn(true)
+        ;
+
+        $modelTransformer
             ->transform(new \DateTime(), \stdClass::class)
             ->willReturn(new \stdClass())
         ;
@@ -83,13 +88,13 @@ class CollectionModelTransformerSpec extends ObjectBehavior
     )
     {
         $modelTransformer
-            ->supports(new \DateTime(), \stdClass::class)
-            ->willReturn(false)
+            ->findSupportedModelTransformer(new \DateTime(), \stdClass::class)
+            ->willReturn($modelTransformer)
         ;
 
         $modelTransformer
-            ->transform(new \DateTime(), \stdClass::class)
-            ->willReturn(new \stdClass())
+            ->supports(new \DateTime(), \stdClass::class)
+            ->willReturn(false)
         ;
 
         $this
