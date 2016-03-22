@@ -10,9 +10,14 @@ use Tonic\Component\ApiLayer\ModelTransformer\Exception\UnsupportedTransformatio
 class ModelTransformer implements ModelTransformerInterface
 {
     /**
-     * @var ModelTransformerInterface[]
+     * @var array
      */
     private $modelTransformers = [];
+
+    /**
+     * @var ModelTransformerInterface[]
+     */
+    private $sorted = [];
 
     /**
      * @param ModelTransformerInterface $modelTransformer
