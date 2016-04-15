@@ -11,7 +11,8 @@ interface ModelTransformerInterface
      * Does transformer support transformation to target class?
      *
      * @param object|array|\Traversable $object
-     * @param string                    $targetClass
+     * @param string $targetClass
+     * @param ContextInterface|null $context
      *
      * @return bool
      */
@@ -21,9 +22,10 @@ interface ModelTransformerInterface
      * Transforms object to supported class.
      *
      * @param object|array|\Traversable $object
-     * @param string                    $targetClass
+     * @param string $targetClass
+     * @param ContextInterface $context
      *
-     * @return object|object[]|array
+     * @return array|object|\object[]
      */
     public function transform($object, $targetClass);
 }
