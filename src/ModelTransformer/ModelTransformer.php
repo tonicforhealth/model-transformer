@@ -89,8 +89,15 @@ class ModelTransformer implements ModelTransformerInterface
      */
     public function transform($object, $targetClass)
     {
-        $modelTransformer = $this->findSupportedModelTransformer($object, $targetClass);
-        if ($modelTransformer) {
+        /** @var ContextInterface $context */
+        $context = (func_num_args() == 3) ? func_get_arg(2) : null;
+
+        $modelTransformer = $this->findSupportedModelTransformer($object, $targetClass, $context);
+        if ($modelTransformer instanceof ContextualModelTransformerInterface) {
+            return $modelTransformer->transform($object, $targetClass, $context);
+        }
+
+        if (($modelTransformer instanceof ModelTransformerInterface) && $modelTransformer->supports($object, $targetClass)) {
             return $modelTransformer->transform($object, $targetClass);
         }
 
@@ -107,13 +114,18 @@ class ModelTransformer implements ModelTransformerInterface
      *
      * @param object|array $object
      * @param string $targetClass
+     * @param ContextInterface|null $context
      *
-     * @return ModelTransformerInterface|null
+     * @return null|ModelTransformerInterface
      */
-    public function findSupportedModelTransformer($object, $targetClass)
+    public function findSupportedModelTransformer($object, $targetClass, ContextInterface $context = null)
     {
         foreach ($this->getModelTransformers() as $modelTransformer) {
-            if ($modelTransformer->supports($object, $targetClass)) {
+            if (($modelTransformer instanceof ContextualModelTransformerInterface) && $modelTransformer->supports($object, $targetClass, $context)) {
+                return $modelTransformer;
+            }
+
+            if (($modelTransformer instanceof ModelTransformerInterface) && $modelTransformer->supports($object, $targetClass)) {
                 return $modelTransformer;
             }
         }

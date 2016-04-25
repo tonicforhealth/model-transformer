@@ -5,7 +5,7 @@ namespace Tonic\Component\ApiLayer\ModelTransformer;
 use Tonic\Component\ApiLayer\ModelTransformer\Exception\UnsupportedTransformationException;
 
 /**
- * Handles homogeneous collection of objects.
+ * Handles collection of objects.
  */
 class CollectionModelTransformer implements ModelTransformerInterface
 {
@@ -29,13 +29,17 @@ class CollectionModelTransformer implements ModelTransformerInterface
      */
     public function supports($object, $targetClass)
     {
-        if (!(is_array($object) || $object instanceof \Traversable)) {
-            return false;
+        if (is_array($object) || $object instanceof \Traversable) {
+            foreach ($object as $element) {
+                if (!$this->modelTransformer->supports($element, $targetClass)) {
+                    return false;
+                }
+            }
+
+            return true;
         }
 
-        // if at least one object supported in homogeneous collection
-        // it is assumed that all other objects are supported
-        return ((count($object) == 0) || $this->modelTransformer->supports(reset($object), $targetClass));
+        return false;
     }
 
     /**
@@ -47,18 +51,13 @@ class CollectionModelTransformer implements ModelTransformerInterface
             return [];
         }
 
-        $modelTransformer = $this->modelTransformer->findSupportedModelTransformer(reset($object), $targetClass);
-        if (!$modelTransformer) {
+        if (!$this->supports($object, $targetClass)) {
             throw new UnsupportedTransformationException();
         }
 
         $elements = [];
         foreach ($object as $element) {
-            if (!$this->modelTransformer->supports($element, $targetClass)) {
-                throw new UnsupportedTransformationException();
-            }
-
-            $elements[] = $modelTransformer->transform($element, $targetClass);
+            $elements[] = $this->modelTransformer->transform($element, $targetClass);
         }
 
         return $elements;

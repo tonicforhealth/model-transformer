@@ -20,7 +20,7 @@ class CollectionModelTransformerSpec extends ObjectBehavior
         $this->shouldImplement(ModelTransformerInterface::class);
     }
 
-    function it_should_support_transformation_if_first_object_can_be_transformed(
+    function it_should_support_transformation_if_every_object_can_be_transformed(
         ModelTransformer $modelTransformer
     )
     {
@@ -31,7 +31,7 @@ class CollectionModelTransformerSpec extends ObjectBehavior
 
         $modelTransformer
             ->supports(new \stdClass(), \stdClass::class)
-            ->willReturn(false)
+            ->willReturn(true)
         ;
 
         $this
@@ -56,7 +56,7 @@ class CollectionModelTransformerSpec extends ObjectBehavior
 
         $this
             ->supports([new \DateTime(), new \stdClass()], \stdClass::class)
-            ->shouldBe(true)
+            ->shouldBe(false)
         ;
     }
 

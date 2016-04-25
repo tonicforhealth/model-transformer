@@ -157,6 +157,51 @@ class ModelTransformerSpec extends ObjectBehavior
             ->duringTransform(new \stdClass(), 'SomeClass');
     }
 
+    function it_should_pass_context_during_transformation_to_contextual_model_transformer(
+        ContextualModelTransformerInterface $contextualModelTransformer,
+        ContextInterface $context
+    )
+    {
+        $this->addModelTransformer($contextualModelTransformer);
+
+        $contextualModelTransformer
+            ->supports(new \stdClass(), 'SomeClass', $context)
+            ->shouldBeCalled()
+            ->willReturn(true);
+
+        $contextualModelTransformer
+            ->transform(new \stdClass(), 'SomeClass', $context)
+            ->shouldBeCalled()
+            ->willReturn((object)['a' => 1]);
+
+        $this
+            ->transform(new \stdClass(), 'SomeClass', $context)
+            ->shouldBeLike((object)['a' => 1]);
+    }
+
+    function it_should_not_pass_context_during_transformation_to_model_transformer(
+        ModelTransformerInterface $modelTransformer,
+        ContextInterface $context
+    )
+    {
+        $this->addModelTransformer($modelTransformer);
+
+        $modelTransformer
+            ->supports(new \stdClass(), 'SomeClass')
+            ->shouldBeCalled()
+            ->willReturn(true);
+
+        $modelTransformer
+            ->transform(new \stdClass(), 'SomeClass')
+            ->shouldBeCalled()
+            ->willReturn((object)['a' => 1]);
+
+        $this
+            ->transform(new \stdClass(), 'SomeClass', $context)
+            ->shouldBeLike((object)['a' => 1]);
+    }
+
+
     function it_should_transform_object_if_at_least_one_transformer_transforms_it(
         ModelTransformerInterface $notSupportedModelTransformer,
         ModelTransformerInterface $supportedModelTransformer
@@ -180,6 +225,40 @@ class ModelTransformerSpec extends ObjectBehavior
         $this
             ->transform(new \stdClass(), 'SomeClass')
             ->shouldBeLike((object)['a' => 1]);
+    }
+
+    public function it_should_pass_context_to_contextual_model_transformer(
+        ContextualModelTransformerInterface $contextualModelTransformer,
+        ContextInterface $context
+    )
+    {
+        $contextualModelTransformer
+            ->supports(new \stdClass(), 'SomeClass', $context)
+            ->shouldBeCalled()
+            ->willReturn(true);
+
+        $this->addModelTransformer($contextualModelTransformer);
+
+        $this
+            ->findSupportedModelTransformer(new \stdClass(), 'SomeClass', $context)
+            ->shouldBe($contextualModelTransformer);
+    }
+
+    public function it_should_not_pass_context_to_model_transformer(
+        ModelTransformerInterface $modelTransformer,
+        ContextInterface $context
+    )
+    {
+        $modelTransformer
+            ->supports(new \stdClass(), 'SomeClass')
+            ->shouldBeCalled()
+            ->willReturn(true);
+
+        $this->addModelTransformer($modelTransformer);
+
+        $this
+            ->findSupportedModelTransformer(new \stdClass(), 'SomeClass', $context)
+            ->shouldBe($modelTransformer);
     }
 
     public function it_should_find_and_return_supported_model_transformer(
