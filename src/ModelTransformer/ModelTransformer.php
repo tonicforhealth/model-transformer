@@ -21,12 +21,20 @@ class ModelTransformer implements ModelTransformerInterface
 
     /**
      * @param ModelTransformerInterface $modelTransformer
-     * @param int                       $priority
+     * @param int $priority
      *
      * @return $this|ModelTransformerInterface
+     *
+     * @throws \RuntimeException
      */
-    public function addModelTransformer(ModelTransformerInterface $modelTransformer, $priority = 0)
+    public function addModelTransformer($modelTransformer, $priority = 0)
     {
+        if (!(($modelTransformer instanceof ModelTransformerInterface) || ($modelTransformer instanceof ContextualModelTransformerInterface))) {
+            throw new \RuntimeException(
+                sprintf('Model transformer should be an instance of "%s" or "%s"', ModelTransformerInterface::class, ContextualModelTransformerInterface::class)
+            );
+        }
+
         if (!isset($this->modelTransformers[$priority])) {
             $this->modelTransformers[$priority] = [];
         }
@@ -60,8 +68,15 @@ class ModelTransformer implements ModelTransformerInterface
      */
     public function supports($object, $targetClass)
     {
+        /** @var ContextInterface $context */
+        $context = (func_num_args() == 3) ? func_get_arg(2) : null;
+
         foreach ($this->getModelTransformers() as $modelTransformer) {
-            if ($modelTransformer->supports($object, $targetClass)) {
+            if (($modelTransformer instanceof ContextualModelTransformerInterface) && $modelTransformer->supports($object, $targetClass, $context)) {
+                return true;
+            }
+
+            if (($modelTransformer instanceof ModelTransformerInterface) && $modelTransformer->supports($object, $targetClass)) {
                 return true;
             }
         }
@@ -91,7 +106,7 @@ class ModelTransformer implements ModelTransformerInterface
      * Finds and returns model transformer which supports specified object and target class.
      *
      * @param object|array $object
-     * @param string       $targetClass
+     * @param string $targetClass
      *
      * @return ModelTransformerInterface|null
      */
