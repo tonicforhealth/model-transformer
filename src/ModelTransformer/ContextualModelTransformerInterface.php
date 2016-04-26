@@ -12,20 +12,20 @@ interface ContextualModelTransformerInterface
      *
      * @param object|array|\Traversable $object
      * @param string $targetClass
-     * @param ContextInterface $context
+     * @param ContextInterface|null $context
      *
      * @return bool
      */
-    public function supports($object, $targetClass, ContextInterface $context);
+    public function supports($object, $targetClass, ContextInterface $context = null);
 
     /**
      * Transforms object to supported class with specified context.
      *
      * @param object|array|\Traversable $object
      * @param string $targetClass
-     * @param ContextInterface $context
+     * @param ContextInterface|null $context
      *
      * @return array|object|\object[]
      */
-    public function transform($object, $targetClass, ContextInterface $context);
+    public function transform($object, $targetClass, ContextInterface $context = null);
 }
