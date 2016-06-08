@@ -10,14 +10,24 @@ use Tonic\Component\ApiLayer\ModelTransformer\Exception\UnsupportedTransformatio
 class ModelTransformer implements ModelTransformerInterface
 {
     /**
-     * @var array
+     * @var ModelTransformerInterface[]|ContextualModelTransformerInterface[]
      */
     private $modelTransformers = [];
 
     /**
+     * @var ObjectTransformerInterface[]
+     */
+    private $objectTransformers = [];
+
+    /**
      * @var array
      */
-    private $sorted = [];
+    private $sortedModelTransformers = [];
+
+    /**
+     * @var array
+     */
+    private $sortedObjectTransformers = [];
 
     /**
      * @param ModelTransformerInterface $modelTransformer
@@ -29,10 +39,29 @@ class ModelTransformer implements ModelTransformerInterface
      */
     public function addModelTransformer($modelTransformer, $priority = 0)
     {
-        if (!(($modelTransformer instanceof ModelTransformerInterface) || ($modelTransformer instanceof ContextualModelTransformerInterface))) {
+        if (!(($modelTransformer instanceof ModelTransformerInterface)
+            || ($modelTransformer instanceof ContextualModelTransformerInterface)
+            || ($modelTransformer instanceof ObjectTransformerInterface)
+        )
+        ) {
             throw new \RuntimeException(
-                sprintf('Model transformer should be an instance of "%s" or "%s"', ModelTransformerInterface::class, ContextualModelTransformerInterface::class)
+                sprintf('Model transformer should be an instance of "%s", "%s" or "%s"', ModelTransformerInterface::class, ContextualModelTransformerInterface::class, ObjectTransformerInterface::class)
             );
+        }
+
+        if ($modelTransformer instanceof ObjectTransformerInterface) {
+            if (!isset($this->objectTransformers[$modelTransformer->getSupportedClass()])) {
+                $this->objectTransformers[$modelTransformer->getSupportedClass()] = [];
+            }
+
+            if (!isset($this->objectTransformers[$modelTransformer->getSupportedClass()][$modelTransformer->getTargetClass()])) {
+                $this->objectTransformers[$modelTransformer->getSupportedClass()][$modelTransformer->getTargetClass()] = [];
+            }
+
+            $this->objectTransformers[$modelTransformer->getSupportedClass()][$modelTransformer->getTargetClass()][$priority] = $modelTransformer;
+            unset($this->sortedObjectTransformers);
+
+            return $this;
         }
 
         if (!isset($this->modelTransformers[$priority])) {
@@ -40,9 +69,30 @@ class ModelTransformer implements ModelTransformerInterface
         }
 
         $this->modelTransformers[$priority][] = $modelTransformer;
-        unset($this->sorted);
+        unset($this->sortedModelTransformers);
 
         return $this;
+    }
+
+    /**
+     * @return ObjectTransformerInterface[]
+     */
+    public function getObjectTransformers()
+    {
+        if (isset($this->sortedObjectTransformers)) {
+            return $this->sortedObjectTransformers;
+        }
+
+        $this->sortedObjectTransformers = [];
+        foreach ($this->objectTransformers as $supportedClass => $objectTransformersBySupportedClass) {
+            $this->sortedObjectTransformers[$supportedClass] = [];
+            foreach ($objectTransformersBySupportedClass as $targetClass => $objectTransformersByPriorities) {
+                ksort($objectTransformersByPriorities);
+                $this->sortedObjectTransformers[$supportedClass][$targetClass] = array_values($objectTransformersByPriorities)[0];
+            }
+        }
+
+        return $this->sortedObjectTransformers;
     }
 
     /**
@@ -50,17 +100,17 @@ class ModelTransformer implements ModelTransformerInterface
      */
     public function getModelTransformers()
     {
-        if (isset($this->sorted)) {
-            return $this->sorted;
+        if (isset($this->sortedModelTransformers)) {
+            return $this->sortedModelTransformers;
         }
 
         krsort($this->modelTransformers);
-        $this->sorted = [];
+        $this->sortedModelTransformers = [];
         foreach ($this->modelTransformers as $modelTransformers) {
-            $this->sorted = array_merge($this->sorted, $modelTransformers);
+            $this->sortedModelTransformers = array_merge($this->sortedModelTransformers, $modelTransformers);
         }
 
-        return $this->sorted;
+        return $this->sortedModelTransformers;
     }
 
     /**
@@ -70,6 +120,11 @@ class ModelTransformer implements ModelTransformerInterface
     {
         /** @var ContextInterface $context */
         $context = (func_num_args() == 3) ? func_get_arg(2) : null;
+
+        $objectTransformers = $this->getObjectTransformers();
+        if (isset($objectTransformers[get_class($object)]) && isset($objectTransformers[get_class($object)][$targetClass])) {
+            return true;
+        }
 
         foreach ($this->getModelTransformers() as $modelTransformer) {
             if (($modelTransformer instanceof ContextualModelTransformerInterface) && $modelTransformer->supports($object, $targetClass, $context)) {
@@ -93,6 +148,11 @@ class ModelTransformer implements ModelTransformerInterface
         $context = (func_num_args() == 3) ? func_get_arg(2) : null;
 
         $modelTransformer = $this->findSupportedModelTransformer($object, $targetClass, $context);
+
+        if ($modelTransformer instanceof ObjectTransformerInterface) {
+            return $modelTransformer->transform($object);
+        }
+
         if ($modelTransformer instanceof ContextualModelTransformerInterface) {
             return $modelTransformer->transform($object, $targetClass, $context);
         }
@@ -116,10 +176,15 @@ class ModelTransformer implements ModelTransformerInterface
      * @param string $targetClass
      * @param ContextInterface|null $context
      *
-     * @return null|ModelTransformerInterface
+     * @return null|ModelTransformerInterface|ContextualModelTransformerInterface|ObjectTransformerInterface
      */
     public function findSupportedModelTransformer($object, $targetClass, ContextInterface $context = null)
     {
+        $objectTransformers = $this->getObjectTransformers();
+        if (isset($objectTransformers[get_class($object)]) && isset($objectTransformers[get_class($object)][$targetClass])) {
+            return $objectTransformers[get_class($object)][$targetClass];
+        }
+
         foreach ($this->getModelTransformers() as $modelTransformer) {
             if (($modelTransformer instanceof ContextualModelTransformerInterface) && $modelTransformer->supports($object, $targetClass, $context)) {
                 return $modelTransformer;
@@ -127,6 +192,10 @@ class ModelTransformer implements ModelTransformerInterface
 
             if (($modelTransformer instanceof ModelTransformerInterface) && $modelTransformer->supports($object, $targetClass)) {
                 return $modelTransformer;
+            }
+
+            if ($modelTransformer instanceof ObjectTransformerInterface) {
+                continue;
             }
         }
 

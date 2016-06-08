@@ -9,6 +9,7 @@ use Tonic\Component\ApiLayer\ModelTransformer\ContextInterface;
 use Tonic\Component\ApiLayer\ModelTransformer\ContextualModelTransformerInterface;
 use Tonic\Component\ApiLayer\ModelTransformer\ModelTransformerInterface;
 use Tonic\Component\ApiLayer\ModelTransformer\Exception\UnsupportedTransformationException;
+use Tonic\Component\ApiLayer\ModelTransformer\ObjectTransformerInterface;
 
 /**
  * @codingStandardsIgnoreStart
@@ -281,4 +282,51 @@ class ModelTransformerSpec extends ObjectBehavior
             ->findSupportedModelTransformer(new \stdClass(), 'SomeClass')
             ->shouldBe($supportedModelTransformer);
     }
+
+    public function it_should_find_and_return_supported_object_transformer(
+        ObjectTransformerInterface $objectTransformer
+    )
+    {
+        $objectTransformer->getSupportedClass()->willReturn(\stdClass::class);
+        $objectTransformer->getTargetClass()->willReturn('SomeClass');
+
+        $this->addModelTransformer($objectTransformer);
+
+        $this
+            ->findSupportedModelTransformer(new \stdClass(), 'SomeClass')
+            ->shouldBe($objectTransformer);
+    }
+
+    public function it_supports_object_transformers(
+        ObjectTransformerInterface $objectTransformer
+    )
+    {
+        $objectTransformer->getSupportedClass()->willReturn(\stdClass::class);
+        $objectTransformer->getTargetClass()->willReturn(\DateTime::class);
+
+        $this->supports(new \stdClass(), \DateTime::class)->shouldBe(false);
+
+        $this->addModelTransformer($objectTransformer);
+
+        $this->supports(new \stdClass(), \DateTime::class)->shouldBe(true);
+    }
+
+    function it_should_transform_object_via_object_transformer(
+        ObjectTransformerInterface $objectTransformer
+    )
+    {
+        $objectTransformer->getSupportedClass()->willReturn(\stdClass::class);
+        $objectTransformer->getTargetClass()->willReturn(\DateTime::class);
+
+        $objectTransformer
+            ->transform(new \stdClass())
+            ->willReturn(new \DateTime('now'));
+
+        $this->addModelTransformer($objectTransformer);
+
+        $this
+            ->transform(new \stdClass(), \DateTime::class)
+            ->shouldBeLike(new \DateTime('now'));
+    }
+
 }

@@ -201,6 +201,9 @@ Use it anywhere:
 $productRepresentation = $modelTransformer->transform($product, ProductRepresentation::class);
 ```
 
+If you have simple rules of transformation, you can use ObjectTransformerInterface instead. As bonus 
+transformation will work much faster.
+
 Specifications
 --------------
 
