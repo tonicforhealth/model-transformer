@@ -311,6 +311,16 @@ class ModelTransformerSpec extends ObjectBehavior
         $this->supports(new \stdClass(), \DateTime::class)->shouldBe(true);
     }
 
+    function it_states_that_null_is_null()
+    {
+        $this->transform(null, \DateTime::class)->shouldBeNull();
+    }
+
+    function it_supports_null()
+    {
+        $this->supports(null, \DateTime::class)->shouldBe(true);
+    }
+
     function it_should_transform_object_via_object_transformer(
         ObjectTransformerInterface $objectTransformer
     )

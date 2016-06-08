@@ -118,6 +118,11 @@ class ModelTransformer implements ModelTransformerInterface
      */
     public function supports($object, $targetClass)
     {
+        if (null === $object) {
+            // transformation of nothing ot anything is nothing
+            return true;
+        }
+
         /** @var ContextInterface $context */
         $context = (func_num_args() == 3) ? func_get_arg(2) : null;
 
@@ -144,6 +149,11 @@ class ModelTransformer implements ModelTransformerInterface
      */
     public function transform($object, $targetClass)
     {
+        if (null === $object) {
+            // transformation of nothing ot anything is nothing
+            return null;
+        }
+
         /** @var ContextInterface $context */
         $context = (func_num_args() == 3) ? func_get_arg(2) : null;
 
