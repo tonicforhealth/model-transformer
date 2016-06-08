@@ -83,6 +83,13 @@ class CollectionModelTransformerSpec extends ObjectBehavior
         ;
     }
 
+    function it_can_transform_empty_arrays()
+    {
+        $this->supports([], 'SomeClass')->shouldBe(true);
+
+        $this->transform([], 'SomeClass')->shouldBeLike([]);
+    }
+
     function it_should_throw_exception_if_it_can_not_transform_at_least_one_collection_element(
         ModelTransformer $modelTransformer
     )
