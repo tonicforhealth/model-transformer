@@ -127,7 +127,7 @@ class ModelTransformer implements ModelTransformerInterface
         $context = (func_num_args() == 3) ? func_get_arg(2) : null;
 
         $objectTransformers = $this->getObjectTransformers();
-        if (isset($objectTransformers[get_class($object)]) && isset($objectTransformers[get_class($object)][$targetClass])) {
+        if (is_object($object) && isset($objectTransformers[get_class($object)]) && isset($objectTransformers[get_class($object)][$targetClass])) {
             return true;
         }
 
@@ -159,7 +159,7 @@ class ModelTransformer implements ModelTransformerInterface
 
         $modelTransformer = $this->findSupportedModelTransformer($object, $targetClass, $context);
 
-        if ($modelTransformer instanceof ObjectTransformerInterface) {
+        if (is_object($object) && ($modelTransformer instanceof ObjectTransformerInterface)) {
             return $modelTransformer->transform($object);
         }
 
@@ -191,7 +191,7 @@ class ModelTransformer implements ModelTransformerInterface
     public function findSupportedModelTransformer($object, $targetClass, ContextInterface $context = null)
     {
         $objectTransformers = $this->getObjectTransformers();
-        if (isset($objectTransformers[get_class($object)]) && isset($objectTransformers[get_class($object)][$targetClass])) {
+        if (is_object($object) && isset($objectTransformers[get_class($object)]) && isset($objectTransformers[get_class($object)][$targetClass])) {
             return $objectTransformers[get_class($object)][$targetClass];
         }
 
