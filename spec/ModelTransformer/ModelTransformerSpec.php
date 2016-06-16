@@ -339,4 +339,25 @@ class ModelTransformerSpec extends ObjectBehavior
             ->shouldBeLike(new \DateTime('now'));
     }
 
+    function it_should_transform_object_via_object_transformer_even_for_subclasses(
+        ObjectTransformerInterface $objectTransformer
+    )
+    {
+        $objectTransformer->getSupportedClass()->willReturn(\stdClass::class);
+        $objectTransformer->getTargetClass()->willReturn(\DateTime::class);
+
+        $objectTransformer
+            ->transform(new SomeSupportedClass())
+            ->willReturn(new SomeTargetClass('now'));
+
+        $this->addModelTransformer($objectTransformer);
+
+        $this
+            ->transform(new SomeSupportedClass(), SomeTargetClass::class)
+            ->shouldBeLike(new SomeTargetClass('now'));
+    }
 }
+
+class SomeSupportedClass extends \stdClass {}
+
+class SomeTargetClass extends \DateTime {}

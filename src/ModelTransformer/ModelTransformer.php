@@ -190,9 +190,8 @@ class ModelTransformer implements ModelTransformerInterface
      */
     public function findSupportedModelTransformer($object, $targetClass, ContextInterface $context = null)
     {
-        $objectTransformers = $this->getObjectTransformers();
-        if (is_object($object) && isset($objectTransformers[get_class($object)]) && isset($objectTransformers[get_class($object)][$targetClass])) {
-            return $objectTransformers[get_class($object)][$targetClass];
+        if (is_object($object) && ($objectTransformer = $this->findSupportedObjectTransformer(get_class($object), $targetClass))) {
+            return $objectTransformer;
         }
 
         foreach ($this->getModelTransformers() as $modelTransformer) {
@@ -207,6 +206,40 @@ class ModelTransformer implements ModelTransformerInterface
             if ($modelTransformer instanceof ObjectTransformerInterface) {
                 continue;
             }
+        }
+
+        return null;
+    }
+
+    /**
+     * Tries to find supported object transformer.
+     *
+     * @param string $supportedClass
+     * @param string $targetClass
+     *
+     * @return null|ObjectTransformerInterface
+     */
+    private function findSupportedObjectTransformer($supportedClass, $targetClass)
+    {
+        $objectTransformers = $this->getObjectTransformers();
+
+        if (isset($objectTransformers[$supportedClass]) && isset($objectTransformers[$supportedClass][$targetClass])) {
+            return $objectTransformers[$supportedClass][$targetClass];
+        }
+
+        $supportedReflectionClass = new \ReflectionClass($supportedClass);
+
+        while ($supportedParentClass = $supportedReflectionClass->getParentClass()) {
+            $targetReflectionClass = new \ReflectionClass($targetClass);
+            while ($targetParentClass = $targetReflectionClass->getParentClass()) {
+                $objectTransformer = $this->findSupportedObjectTransformer($supportedParentClass->getName(), $targetParentClass->getName());
+                if ($objectTransformer) {
+                    return $objectTransformer;
+                }
+
+                $targetParentClass = $targetParentClass->getParentClass();
+            }
+            $supportedParentClass = $supportedReflectionClass->getParentClass();
         }
 
         return null;
