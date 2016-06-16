@@ -222,24 +222,23 @@ class ModelTransformer implements ModelTransformerInterface
     private function findSupportedObjectTransformer($supportedClass, $targetClass)
     {
         $objectTransformers = $this->getObjectTransformers();
-
         if (isset($objectTransformers[$supportedClass]) && isset($objectTransformers[$supportedClass][$targetClass])) {
             return $objectTransformers[$supportedClass][$targetClass];
         }
 
         $supportedReflectionClass = new \ReflectionClass($supportedClass);
 
-        while ($supportedParentClass = $supportedReflectionClass->getParentClass()) {
-            $targetReflectionClass = new \ReflectionClass($targetClass);
-            while ($targetParentClass = $targetReflectionClass->getParentClass()) {
-                $objectTransformer = $this->findSupportedObjectTransformer($supportedParentClass->getName(), $targetParentClass->getName());
-                if ($objectTransformer) {
-                    return $objectTransformer;
-                }
+        if ($supportedReflectionClass->getParentClass()
+            && ($objectTransformer = $this->findSupportedObjectTransformer($supportedReflectionClass->getParentClass()->getName(), $targetClass))
+        ) {
+            return $objectTransformer;
+        }
 
-                $targetParentClass = $targetParentClass->getParentClass();
-            }
-            $supportedParentClass = $supportedReflectionClass->getParentClass();
+        $targetReflectionClass = new \ReflectionClass($targetClass);
+        if ($targetReflectionClass->getParentClass()
+            && ($objectTransformer = $this->findSupportedObjectTransformer($supportedClass, $targetReflectionClass->getParentClass()->getName()))
+        ) {
+            return $objectTransformer;
         }
 
         return null;

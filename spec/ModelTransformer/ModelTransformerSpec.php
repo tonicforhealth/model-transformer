@@ -53,9 +53,9 @@ class ModelTransformerSpec extends ObjectBehavior
     {
         $this->addModelTransformer($contextualModelTransformer);
 
-        $contextualModelTransformer->supports(new \stdClass(), 'SomeClass', $context)->shouldBeCalled()->willReturn(true);
+        $contextualModelTransformer->supports(new \stdClass(), SomeClass::class, $context)->shouldBeCalled()->willReturn(true);
 
-        $this->supports(new \stdClass(), 'SomeClass', $context)->shouldBe(true);
+        $this->supports(new \stdClass(), SomeClass::class, $context)->shouldBe(true);
     }
 
     function it_should_not_pass_context_to_model_transformers(
@@ -65,9 +65,9 @@ class ModelTransformerSpec extends ObjectBehavior
     {
         $this->addModelTransformer($notContextualModelTransformer);
 
-        $notContextualModelTransformer->supports(new \stdClass(), 'SomeClass')->shouldBeCalled()->willReturn(true);
+        $notContextualModelTransformer->supports(new \stdClass(), SomeClass::class)->shouldBeCalled()->willReturn(true);
 
-        $this->supports(new \stdClass(), 'SomeClass', $context)->shouldBe(true);
+        $this->supports(new \stdClass(), SomeClass::class, $context)->shouldBe(true);
     }
 
 
@@ -82,21 +82,21 @@ class ModelTransformerSpec extends ObjectBehavior
         $this->addModelTransformer($firstTransformer, 15)->shouldBe($this->getWrappedObject());
 
         $firstTransformer
-            ->supports(new \stdClass(), 'SomeClass')
+            ->supports(new \stdClass(), SomeClass::class)
             ->willReturn(false)
             ->shouldBeCalled();
 
         $secondTransformer
-            ->supports(new \stdClass(), 'SomeClass')
+            ->supports(new \stdClass(), SomeClass::class)
             ->willReturn(true)
             ->shouldBeCalled();
 
         $thirdTransformer
-            ->supports(new \stdClass(), 'SomeClass')
+            ->supports(new \stdClass(), SomeClass::class)
             ->willReturn(false)
             ->shouldNotBeCalled();
 
-        $this->supports(new \stdClass(), 'SomeClass')->shouldBe(true);
+        $this->supports(new \stdClass(), SomeClass::class)->shouldBe(true);
     }
 
     function it_should_support_target_class_if_at_least_one_transformer_supports_it(
@@ -105,17 +105,17 @@ class ModelTransformerSpec extends ObjectBehavior
     )
     {
         $supportedModelTransformer
-            ->supports(new \stdClass(), 'SomeClass')
+            ->supports(new \stdClass(), SomeClass::class)
             ->willReturn(true);
 
         $notSupportedModelTransformer
-            ->supports(new \stdClass(), 'SomeClass')
+            ->supports(new \stdClass(), SomeClass::class)
             ->willReturn(false);
 
         $this->addModelTransformer($supportedModelTransformer);
         $this->addModelTransformer($notSupportedModelTransformer);
 
-        $this->supports(new \stdClass(), 'SomeClass')->shouldBe(true);
+        $this->supports(new \stdClass(), SomeClass::class)->shouldBe(true);
     }
 
     function it_should_not_support_target_class_if_transformers_do_not_support_it(
@@ -124,17 +124,17 @@ class ModelTransformerSpec extends ObjectBehavior
     )
     {
         $supportedModelTransformer
-            ->supports(new \stdClass(), 'SomeClass')
+            ->supports(new \stdClass(), SomeClass::class)
             ->willReturn(false);
 
         $notSupportedModelTransformer
-            ->supports(new \stdClass(), 'SomeClass')
+            ->supports(new \stdClass(), SomeClass::class)
             ->willReturn(false);
 
         $this->addModelTransformer($supportedModelTransformer);
         $this->addModelTransformer($notSupportedModelTransformer);
 
-        $this->supports(new \stdClass(), 'SomeClass')->shouldBe(false);
+        $this->supports(new \stdClass(), SomeClass::class)->shouldBe(false);
     }
 
     function it_should_throw_exception_if_transformers_can_not_transform_object_to_target_class(
@@ -143,11 +143,11 @@ class ModelTransformerSpec extends ObjectBehavior
     )
     {
         $supportedModelTransformer
-            ->supports(new \stdClass(), 'SomeClass')
+            ->supports(new \stdClass(), SomeClass::class)
             ->willReturn(false);
 
         $notSupportedModelTransformer
-            ->supports(new \stdClass(), 'SomeClass')
+            ->supports(new \stdClass(), SomeClass::class)
             ->willReturn(false);
 
         $this->addModelTransformer($supportedModelTransformer);
@@ -155,7 +155,7 @@ class ModelTransformerSpec extends ObjectBehavior
 
         $this
             ->shouldThrow(UnsupportedTransformationException::class)
-            ->duringTransform(new \stdClass(), 'SomeClass');
+            ->duringTransform(new \stdClass(), SomeClass::class);
     }
 
     function it_should_pass_context_during_transformation_to_contextual_model_transformer(
@@ -166,17 +166,17 @@ class ModelTransformerSpec extends ObjectBehavior
         $this->addModelTransformer($contextualModelTransformer);
 
         $contextualModelTransformer
-            ->supports(new \stdClass(), 'SomeClass', $context)
+            ->supports(new \stdClass(), SomeClass::class, $context)
             ->shouldBeCalled()
             ->willReturn(true);
 
         $contextualModelTransformer
-            ->transform(new \stdClass(), 'SomeClass', $context)
+            ->transform(new \stdClass(), SomeClass::class, $context)
             ->shouldBeCalled()
             ->willReturn((object)['a' => 1]);
 
         $this
-            ->transform(new \stdClass(), 'SomeClass', $context)
+            ->transform(new \stdClass(), SomeClass::class, $context)
             ->shouldBeLike((object)['a' => 1]);
     }
 
@@ -188,17 +188,17 @@ class ModelTransformerSpec extends ObjectBehavior
         $this->addModelTransformer($modelTransformer);
 
         $modelTransformer
-            ->supports(new \stdClass(), 'SomeClass')
+            ->supports(new \stdClass(), SomeClass::class)
             ->shouldBeCalled()
             ->willReturn(true);
 
         $modelTransformer
-            ->transform(new \stdClass(), 'SomeClass')
+            ->transform(new \stdClass(), SomeClass::class)
             ->shouldBeCalled()
             ->willReturn((object)['a' => 1]);
 
         $this
-            ->transform(new \stdClass(), 'SomeClass', $context)
+            ->transform(new \stdClass(), SomeClass::class, $context)
             ->shouldBeLike((object)['a' => 1]);
     }
 
@@ -209,22 +209,22 @@ class ModelTransformerSpec extends ObjectBehavior
     )
     {
         $notSupportedModelTransformer
-            ->supports(new \stdClass(), 'SomeClass')
+            ->supports(new \stdClass(), SomeClass::class)
             ->willReturn(false);
 
         $supportedModelTransformer
-            ->supports(new \stdClass(), 'SomeClass')
+            ->supports(new \stdClass(), SomeClass::class)
             ->willReturn(true);
 
         $supportedModelTransformer
-            ->transform(new \stdClass(), 'SomeClass')
+            ->transform(new \stdClass(), SomeClass::class)
             ->willReturn((object)['a' => 1]);
 
         $this->addModelTransformer($notSupportedModelTransformer);
         $this->addModelTransformer($supportedModelTransformer);
 
         $this
-            ->transform(new \stdClass(), 'SomeClass')
+            ->transform(new \stdClass(), SomeClass::class)
             ->shouldBeLike((object)['a' => 1]);
     }
 
@@ -234,14 +234,14 @@ class ModelTransformerSpec extends ObjectBehavior
     )
     {
         $contextualModelTransformer
-            ->supports(new \stdClass(), 'SomeClass', $context)
+            ->supports(new \stdClass(), SomeClass::class, $context)
             ->shouldBeCalled()
             ->willReturn(true);
 
         $this->addModelTransformer($contextualModelTransformer);
 
         $this
-            ->findSupportedModelTransformer(new \stdClass(), 'SomeClass', $context)
+            ->findSupportedModelTransformer(new \stdClass(), SomeClass::class, $context)
             ->shouldBe($contextualModelTransformer);
     }
 
@@ -251,14 +251,14 @@ class ModelTransformerSpec extends ObjectBehavior
     )
     {
         $modelTransformer
-            ->supports(new \stdClass(), 'SomeClass')
+            ->supports(new \stdClass(), SomeClass::class)
             ->shouldBeCalled()
             ->willReturn(true);
 
         $this->addModelTransformer($modelTransformer);
 
         $this
-            ->findSupportedModelTransformer(new \stdClass(), 'SomeClass', $context)
+            ->findSupportedModelTransformer(new \stdClass(), SomeClass::class, $context)
             ->shouldBe($modelTransformer);
     }
 
@@ -268,18 +268,18 @@ class ModelTransformerSpec extends ObjectBehavior
     )
     {
         $notSupportedModelTransformer
-            ->supports(new \stdClass(), 'SomeClass')
+            ->supports(new \stdClass(), SomeClass::class)
             ->willReturn(false);
 
         $supportedModelTransformer
-            ->supports(new \stdClass(), 'SomeClass')
+            ->supports(new \stdClass(), SomeClass::class)
             ->willReturn(true);
 
         $this->addModelTransformer($notSupportedModelTransformer);
         $this->addModelTransformer($supportedModelTransformer);
 
         $this
-            ->findSupportedModelTransformer(new \stdClass(), 'SomeClass')
+            ->findSupportedModelTransformer(new \stdClass(), SomeClass::class)
             ->shouldBe($supportedModelTransformer);
     }
 
@@ -288,12 +288,12 @@ class ModelTransformerSpec extends ObjectBehavior
     )
     {
         $objectTransformer->getSupportedClass()->willReturn(\stdClass::class);
-        $objectTransformer->getTargetClass()->willReturn('SomeClass');
+        $objectTransformer->getTargetClass()->willReturn(SomeClass::class);
 
         $this->addModelTransformer($objectTransformer);
 
         $this
-            ->findSupportedModelTransformer(new \stdClass(), 'SomeClass')
+            ->findSupportedModelTransformer(new \stdClass(), SomeClass::class)
             ->shouldBe($objectTransformer);
     }
 
@@ -357,6 +357,8 @@ class ModelTransformerSpec extends ObjectBehavior
             ->shouldBeLike(new SomeTargetClass('now'));
     }
 }
+
+class SomeClass extends \stdClass {}
 
 class SomeSupportedClass extends \stdClass {}
 
