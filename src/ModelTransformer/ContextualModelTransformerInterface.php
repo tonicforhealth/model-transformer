@@ -25,7 +25,7 @@ interface ContextualModelTransformerInterface
      * @param string $targetClass
      * @param ContextInterface|null $context
      *
-     * @return array|object|\object[]
+     * @return array|object|object[]
      */
     public function transform($object, $targetClass, ContextInterface $context = null);
 }

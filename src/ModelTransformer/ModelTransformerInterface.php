@@ -23,7 +23,7 @@ interface ModelTransformerInterface
      * @param object|array|\Traversable $object
      * @param string $targetClass
      *
-     * @return array|object|\object[]
+     * @return array|object|object[]
      */
     public function transform($object, $targetClass);
 }
