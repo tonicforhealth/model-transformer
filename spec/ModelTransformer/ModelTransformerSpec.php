@@ -245,6 +245,19 @@ class ModelTransformerSpec extends ObjectBehavior
             ->shouldBe($contextualModelTransformer);
     }
 
+    public function it_should_not_call_support_in_contextual_model_transformer_without_context(
+        ContextualModelTransformerInterface $contextualModelTransformer
+    )
+    {
+        $contextualModelTransformer
+            ->supports(new \stdClass(), SomeClass::class)
+            ->shouldNotBeCalled();
+
+        $this->addModelTransformer($contextualModelTransformer);
+
+        $this->findSupportedModelTransformer(new \stdClass(), SomeClass::class);
+    }
+
     public function it_should_not_pass_context_to_model_transformer(
         ModelTransformerInterface $modelTransformer,
         ContextInterface $context

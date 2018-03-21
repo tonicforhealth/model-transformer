@@ -195,7 +195,7 @@ class ModelTransformer implements ModelTransformerInterface
         }
 
         foreach ($this->getModelTransformers() as $modelTransformer) {
-            if (($modelTransformer instanceof ContextualModelTransformerInterface) && $modelTransformer->supports($object, $targetClass, $context)) {
+            if ($context != null && ($modelTransformer instanceof ContextualModelTransformerInterface) && $modelTransformer->supports($object, $targetClass, $context)) {
                 return $modelTransformer;
             }
 
